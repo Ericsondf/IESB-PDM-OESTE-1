@@ -1,22 +1,37 @@
-import { StyleSheet, Text, View, TextInput, Button } from 'react-native';
-import { rotulo_btn_cadastro_meta, rotulo_input_meta, rotulo_lista_metas } from './mensagens';
+import { Image, StyleSheet, View } from 'react-native';
+import { useState } from 'react';
+import MetaList from './components/MetaList';
+import MetaInput from './components/MetaInput';
+import { SafeAreaView, SafeAreaProvider } from 'react-native-safe-area-context';
 
 export default function App() {
-  return (
-    <View style={styles.mainContainer}>
-      <View style={{flexDirection:'row', justifyContent:'space-between', flex:1}}>
-        <View style={{width:'65%'}}>
-          <TextInput style={styles.inputText} placeholder={rotulo_input_meta} />
-        </View>
-        <View  style={{width:'30%'}}>
-          <Button title={rotulo_btn_cadastro_meta} />
-        </View>
-      </View>
 
-      <View style={styles.metaContainer}>
-        <Text>{rotulo_lista_metas}</Text>
-      </View>
-    </View>
+  const [metas, setMetas] = useState([]);
+
+  function adicionarMetaHandler(inputMeta) {
+    const novaMeta = { id: Math.random().toString(), texto: inputMeta }
+    setMetas([...metas, novaMeta]);
+  }
+
+  function deletarMetaHandler(id) {
+    const novaMetas = metas.filter(meta => meta.id !== id);
+    setMetas(novaMetas);
+  }
+
+  return (
+    <SafeAreaProvider>
+      <SafeAreaView style={styles.safeArea}>
+        <Image source={require('./assets/favicon.png')} style={styles.image}/>
+        <View style={styles.mainContainer}>
+          <MetaInput onAddMeta={adicionarMetaHandler} />
+          <View style={styles.metaContainer}>
+            <MetaList onDeleteItem={deletarMetaHandler} array={metas} />
+          </View>
+        </View>
+      </SafeAreaView>
+    </SafeAreaProvider>
+
+
   );
 }
 
@@ -32,11 +47,24 @@ const styles = StyleSheet.create({
     flex: 1,
     flexDirection: 'column'
   },
-  inputText: {
-    borderColor: "#cccccc",
-    borderWidth: 1
-  },
+
   metaContainer: {
-    flex: 1
+    flex: 9
+  },
+
+  safeArea: {
+    flex: 1,
+    backgroundColor: '#fff'
+  },
+
+  imageContainer: {
+    alignItems: 'left',
+    marginTop: 10,
+    paddingLeft: 30
+  },
+  image: {
+    width: 50,
+    height: 50
   }
+
 });
